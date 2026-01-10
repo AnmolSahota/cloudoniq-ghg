@@ -1,0 +1,729 @@
+{
+  "forms": {
+    "login": {
+      "id": "loginForm",
+      "title": "Sign In",
+      "fields": ["email", "password"],
+      "submitButton": {
+        "text": "Sign In",
+        "loadingText": "Signing in..."
+      }
+    },
+    "userForm": {
+      "id": "userForm",
+      "title": "Create New User",
+      "sections": [
+        {
+          "id": "personal",
+          "title": "Personal Information",
+          "icon": "user",
+          "columns": 2,
+          "fields": ["firstName", "lastName"]
+        },
+        {
+          "id": "contact",
+          "title": "Contact Information",
+          "icon": "mail",
+          "columns": 2,
+          "fields": ["email", "phone"]
+        },
+        {
+          "id": "organization",
+          "title": "Organization Details",
+          "icon": "building",
+          "columns": 3,
+          "fields": ["department", "designation", "branch"]
+        },
+        {
+          "id": "address",
+          "title": "Address",
+          "icon": "mapPin",
+          "columns": 3,
+          "fields": ["address", "city", "state", "pincode"]
+        },
+        {
+          "id": "roleStatus",
+          "title": "Role & Status",
+          "icon": "shield",
+          "columns": 2,
+          "fields": ["role", "status"]
+        }
+      ],
+      "submitButton": {
+        "text": "Create User",
+        "loadingText": "Creating...",
+        "permissionKey": "canCreateUser"
+      },
+      "resetButton": {
+        "text": "Reset"
+      }
+    },
+    "organizationForm": {
+      "id": "organizationForm",
+      "title": "Organization",
+      "description": "Enter organization details and manage branch locations",
+      "sections": [
+        {
+          "id": "basic",
+          "title": "Basic Information",
+          "icon": "building2",
+          "columns": 2,
+          "fields": ["orgCode", "orgName"]
+        },
+        {
+          "id": "details",
+          "title": "Details",
+          "icon": "fileText",
+          "columns": 1,
+          "fields": ["orgDescription"]
+        },
+        {
+          "id": "classification",
+          "title": "Classification",
+          "icon": "tag",
+          "columns": 2,
+          "fields": ["industryType", "ownershipType"]
+        },
+        {
+          "id": "location",
+          "title": "Location",
+          "icon": "mapPin",
+          "columns": 2,
+          "fields": ["orgCountry", "orgCity"]
+        },
+        {
+          "id": "audit",
+          "title": "Audit Information",
+          "icon": "clock",
+          "columns": 2,
+          "fields": ["createdBy", "createdAt", "updatedBy", "updatedAt"],
+          "collapsible": true,
+          "defaultCollapsed": true
+        }
+      ],
+      "submitButton": {
+        "text": "Create Organization",
+        "loadingText": "Creating...",
+        "permissionKey": "canEditOrganization"
+      },
+      "resetButton": {
+        "text": "Reset"
+      }
+    },
+    "branchForm": {
+      "id": "branchForm",
+      "title": "Branch",
+      "description": "Enter branch location details",
+      "sections": [
+        {
+          "id": "basic",
+          "title": "Basic Information",
+          "icon": "building",
+          "columns": 3,
+          "fields": ["branchCode", "branchName", "branchType"]
+        },
+        {
+          "id": "address",
+          "title": "Address",
+          "icon": "mapPin",
+          "columns": 1,
+          "fields": ["addressLine1", "addressLine2"]
+        },
+        {
+          "id": "location",
+          "title": "Location Details",
+          "icon": "globe",
+          "columns": 2,
+          "fields": ["branchCity", "branchState", "branchCountry", "continent"]
+        },
+        {
+          "id": "coordinates",
+          "title": "Coordinates",
+          "icon": "mapPin",
+          "columns": 1,
+          "fields": ["coordinates"]
+        },
+        {
+          "id": "employees",
+          "title": "Employee Information",
+          "icon": "users",
+          "columns": 2,
+          "fields": ["numEmployeesPerm", "numEmployeesTemp"]
+        },
+        {
+          "id": "control",
+          "title": "Control & Ownership",
+          "icon": "shield",
+          "columns": 2,
+          "fields": ["controlType", "equityPercent"]
+        },
+        {
+          "id": "operations",
+          "title": "Operations",
+          "icon": "settings",
+          "columns": 1,
+          "fields": ["operationalBoundary", "scopeOfActivity"]
+        },
+        {
+          "id": "audit",
+          "title": "Audit Information",
+          "icon": "clock",
+          "columns": 2,
+          "fields": ["branchCreatedBy", "branchCreatedAt", "branchUpdatedBy", "branchUpdatedAt"],
+          "collapsible": true,
+          "defaultCollapsed": true
+        }
+      ],
+      "submitButton": {
+        "addText": "Add Branch",
+        "editText": "Update Branch",
+        "loadingText": "Saving...",
+        "permissionKey": "canCreateBranch"
+      },
+      "cancelButton": {
+        "text": "Cancel"
+      }
+    }
+  },
+  "fields": {
+    "email": {
+      "type": "email",
+      "label": "Email Address",
+      "placeholder": "Enter your email",
+      "required": true,
+      "icon": "mail",
+      "validations": ["emailFormat"],
+      "constraints": {
+        "maxLength": 100
+      }
+    },
+    "password": {
+      "type": "password",
+      "label": "Password",
+      "placeholder": "Enter your password",
+      "required": true,
+      "icon": "lock",
+      "showToggle": true,
+      "validations": [],
+      "constraints": {
+        "minLength": 1
+      }
+    },
+    "firstName": {
+      "type": "text",
+      "label": "First Name",
+      "placeholder": "Enter first name",
+      "required": true,
+      "validations": ["alphaOnly"],
+      "constraints": {
+        "minLength": 2,
+        "maxLength": 50
+      },
+      "permissionKey": "canCreateUser"
+    },
+    "lastName": {
+      "type": "text",
+      "label": "Last Name",
+      "placeholder": "Enter last name",
+      "required": true,
+      "validations": ["alphaOnly"],
+      "constraints": {
+        "minLength": 2,
+        "maxLength": 50
+      },
+      "permissionKey": "canCreateUser"
+    },
+    "phone": {
+      "type": "tel",
+      "label": "Phone",
+      "placeholder": "Enter phone number",
+      "required": true,
+      "icon": "phone",
+      "validations": ["phoneFormat"],
+      "constraints": {
+        "minLength": 10,
+        "maxLength": 15
+      },
+      "permissionKey": "canCreateUser"
+    },
+    "department": {
+      "type": "select",
+      "label": "Department",
+      "placeholder": "Select department",
+      "required": true,
+      "options": [
+        { "value": "", "label": "Select", "disabled": true },
+        { "value": "engineering", "label": "Engineering" },
+        { "value": "sales", "label": "Sales" },
+        { "value": "marketing", "label": "Marketing" },
+        { "value": "hr", "label": "HR" },
+        { "value": "finance", "label": "Finance" },
+        { "value": "operations", "label": "Operations" }
+      ],
+      "permissionKey": "canCreateUser"
+    },
+    "designation": {
+      "type": "text",
+      "label": "Designation",
+      "placeholder": "Enter designation",
+      "required": true,
+      "validations": ["alphaNumericSpaces"],
+      "constraints": {
+        "minLength": 2,
+        "maxLength": 50
+      },
+      "permissionKey": "canCreateUser"
+    },
+    "branch": {
+      "type": "select",
+      "label": "Branch",
+      "placeholder": "Select branch",
+      "required": true,
+      "options": [
+        { "value": "", "label": "Select", "disabled": true },
+        { "value": "mumbai", "label": "Mumbai" },
+        { "value": "delhi", "label": "Delhi" },
+        { "value": "bangalore", "label": "Bangalore" },
+        { "value": "chennai", "label": "Chennai" },
+        { "value": "hyderabad", "label": "Hyderabad" },
+        { "value": "pune", "label": "Pune" }
+      ],
+      "permissionKey": "canCreateUser"
+    },
+    "address": {
+      "type": "textarea",
+      "label": "Street Address",
+      "placeholder": "Enter street address",
+      "required": false,
+      "rows": 2,
+      "colSpan": 3,
+      "constraints": {
+        "maxLength": 200
+      },
+      "permissionKey": "canCreateUser"
+    },
+    "city": {
+      "type": "text",
+      "label": "City",
+      "placeholder": "Enter city",
+      "required": false,
+      "validations": ["alphaSpaces"],
+      "constraints": {
+        "maxLength": 50
+      },
+      "permissionKey": "canCreateUser"
+    },
+    "state": {
+      "type": "text",
+      "label": "State",
+      "placeholder": "Enter state",
+      "required": false,
+      "validations": ["alphaSpaces"],
+      "constraints": {
+        "maxLength": 50
+      },
+      "permissionKey": "canCreateUser"
+    },
+    "pincode": {
+      "type": "text",
+      "label": "Pincode",
+      "placeholder": "Enter pincode",
+      "required": false,
+      "validations": ["numericOnly", "fixedLength6"],
+      "constraints": {
+        "minLength": 6,
+        "maxLength": 6
+      },
+      "permissionKey": "canCreateUser"
+    },
+    "role": {
+      "type": "select",
+      "label": "Role",
+      "placeholder": "Select role",
+      "required": true,
+      "defaultValue": "viewer",
+      "options": [
+        { "value": "viewer", "label": "Viewer" },
+        { "value": "branch_manager", "label": "Branch Manager" },
+        { "value": "org_manager", "label": "Org Manager" },
+        { "value": "admin", "label": "Admin" }
+      ],
+      "permissionKey": "canManageUserRoles",
+      "showPermissionWarning": true
+    },
+    "status": {
+      "type": "select",
+      "label": "Status",
+      "placeholder": "Select status",
+      "required": true,
+      "defaultValue": "active",
+      "options": [
+        { "value": "active", "label": "Active" },
+        { "value": "inactive", "label": "Inactive" },
+        { "value": "suspended", "label": "Suspended" }
+      ],
+      "permissionKey": "canCreateUser"
+    },
+    "orgCode": {
+      "type": "text",
+      "label": "Organization Code",
+      "placeholder": "ORG001",
+      "required": true,
+      "validations": ["alphaNumericUppercase"],
+      "constraints": {
+        "minLength": 3,
+        "maxLength": 20
+      },
+      "permissionKey": "canEditOrganization"
+    },
+    "orgName": {
+      "type": "text",
+      "label": "Organization Name",
+      "placeholder": "Acme Corporation",
+      "required": true,
+      "validations": ["alphaNumericSpaces"],
+      "constraints": {
+        "minLength": 2,
+        "maxLength": 100
+      },
+      "permissionKey": "canEditOrganization"
+    },
+    "orgDescription": {
+      "type": "textarea",
+      "label": "Description",
+      "placeholder": "Brief description of the organization",
+      "required": false,
+      "rows": 3,
+      "constraints": {
+        "maxLength": 500
+      },
+      "permissionKey": "canEditOrganization"
+    },
+    "industryType": {
+      "type": "select",
+      "label": "Industry Type",
+      "placeholder": "Select industry type",
+      "required": true,
+      "options": [
+        { "value": "", "label": "Select", "disabled": true },
+        { "value": "manufacturing", "label": "Manufacturing" },
+        { "value": "technology", "label": "Technology" },
+        { "value": "healthcare", "label": "Healthcare" },
+        { "value": "finance", "label": "Finance" },
+        { "value": "retail", "label": "Retail" },
+        { "value": "services", "label": "Services" },
+        { "value": "education", "label": "Education" },
+        { "value": "other", "label": "Other" }
+      ],
+      "permissionKey": "canEditOrganization"
+    },
+    "ownershipType": {
+      "type": "select",
+      "label": "Ownership Type",
+      "placeholder": "Select ownership type",
+      "required": true,
+      "options": [
+        { "value": "", "label": "Select", "disabled": true },
+        { "value": "private", "label": "Private" },
+        { "value": "public", "label": "Public" },
+        { "value": "government", "label": "Government" },
+        { "value": "non_profit", "label": "Non-Profit" },
+        { "value": "partnership", "label": "Partnership" }
+      ],
+      "permissionKey": "canEditOrganization"
+    },
+    "orgCountry": {
+      "type": "text",
+      "label": "Country",
+      "placeholder": "India",
+      "required": true,
+      "validations": ["alphaSpaces"],
+      "constraints": {
+        "minLength": 2,
+        "maxLength": 50
+      },
+      "permissionKey": "canEditOrganization"
+    },
+    "orgCity": {
+      "type": "text",
+      "label": "City",
+      "placeholder": "Mumbai",
+      "required": true,
+      "validations": ["alphaSpaces"],
+      "constraints": {
+        "minLength": 2,
+        "maxLength": 50
+      },
+      "permissionKey": "canEditOrganization"
+    },
+    "createdBy": {
+      "type": "text",
+      "label": "Created By",
+      "placeholder": "System",
+      "required": true,
+      "disabled": true,
+      "constraints": {
+        "maxLength": 100
+      }
+    },
+    "createdAt": {
+      "type": "date",
+      "label": "Created Date",
+      "placeholder": "Select date",
+      "required": true,
+      "disabled": true
+    },
+    "updatedBy": {
+      "type": "text",
+      "label": "Updated By",
+      "placeholder": "-",
+      "required": false,
+      "disabled": true,
+      "constraints": {
+        "maxLength": 100
+      }
+    },
+    "updatedAt": {
+      "type": "date",
+      "label": "Updated Date",
+      "placeholder": "-",
+      "required": false,
+      "disabled": true
+    },
+    "branchCode": {
+      "type": "text",
+      "label": "Branch Code",
+      "placeholder": "BR001",
+      "required": true,
+      "validations": ["alphaNumericUppercase"],
+      "constraints": {
+        "minLength": 2,
+        "maxLength": 20
+      },
+      "permissionKey": "canCreateBranch"
+    },
+    "branchName": {
+      "type": "text",
+      "label": "Branch Name",
+      "placeholder": "Main Office",
+      "required": true,
+      "validations": ["alphaNumericSpaces"],
+      "constraints": {
+        "minLength": 2,
+        "maxLength": 100
+      },
+      "permissionKey": "canCreateBranch"
+    },
+    "branchType": {
+      "type": "select",
+      "label": "Branch Type",
+      "placeholder": "Select branch type",
+      "required": true,
+      "options": [
+        { "value": "", "label": "Select", "disabled": true },
+        { "value": "headquarters", "label": "Headquarters" },
+        { "value": "regional", "label": "Regional Office" },
+        { "value": "branch", "label": "Branch Office" },
+        { "value": "warehouse", "label": "Warehouse" },
+        { "value": "retail", "label": "Retail Store" },
+        { "value": "factory", "label": "Factory" }
+      ],
+      "permissionKey": "canCreateBranch"
+    },
+    "addressLine1": {
+      "type": "text",
+      "label": "Address Line 1",
+      "placeholder": "123 Main Street",
+      "required": true,
+      "validations": ["addressFormat"],
+      "constraints": {
+        "minLength": 5,
+        "maxLength": 200
+      },
+      "permissionKey": "canCreateBranch"
+    },
+    "addressLine2": {
+      "type": "text",
+      "label": "Address Line 2",
+      "placeholder": "Suite 100",
+      "required": false,
+      "validations": ["addressFormat"],
+      "constraints": {
+        "maxLength": 200
+      },
+      "permissionKey": "canCreateBranch"
+    },
+    "branchCity": {
+      "type": "text",
+      "label": "City",
+      "placeholder": "Mumbai",
+      "required": true,
+      "validations": ["alphaSpaces"],
+      "constraints": {
+        "minLength": 2,
+        "maxLength": 50
+      },
+      "permissionKey": "canCreateBranch"
+    },
+    "branchState": {
+      "type": "text",
+      "label": "State/Province",
+      "placeholder": "Maharashtra",
+      "required": true,
+      "validations": ["alphaSpaces"],
+      "constraints": {
+        "minLength": 2,
+        "maxLength": 50
+      },
+      "permissionKey": "canCreateBranch"
+    },
+    "branchCountry": {
+      "type": "text",
+      "label": "Country",
+      "placeholder": "India",
+      "required": true,
+      "validations": ["alphaSpaces"],
+      "constraints": {
+        "minLength": 2,
+        "maxLength": 50
+      },
+      "permissionKey": "canCreateBranch"
+    },
+    "continent": {
+      "type": "select",
+      "label": "Continent",
+      "placeholder": "Select continent",
+      "required": true,
+      "options": [
+        { "value": "", "label": "Select", "disabled": true },
+        { "value": "africa", "label": "Africa" },
+        { "value": "asia", "label": "Asia" },
+        { "value": "europe", "label": "Europe" },
+        { "value": "north_america", "label": "North America" },
+        { "value": "south_america", "label": "South America" },
+        { "value": "oceania", "label": "Oceania" },
+        { "value": "antarctica", "label": "Antarctica" }
+      ],
+      "permissionKey": "canCreateBranch"
+    },
+    "coordinates": {
+      "type": "text",
+      "label": "Coordinates",
+      "placeholder": "40.7128, -74.0060",
+      "required": false,
+      "validations": ["coordinatesFormat"],
+      "description": "Enter latitude and longitude (e.g., 40.7128, -74.0060)",
+      "constraints": {
+        "maxLength": 50
+      },
+      "permissionKey": "canCreateBranch"
+    },
+    "numEmployeesPerm": {
+      "type": "number",
+      "label": "Permanent Employees",
+      "placeholder": "0",
+      "required": true,
+      "validations": ["positiveNumber"],
+      "constraints": {
+        "min": 0,
+        "max": 100000
+      },
+      "permissionKey": "canCreateBranch"
+    },
+    "numEmployeesTemp": {
+      "type": "number",
+      "label": "Temporary Employees",
+      "placeholder": "0",
+      "required": true,
+      "validations": ["positiveNumber"],
+      "constraints": {
+        "min": 0,
+        "max": 100000
+      },
+      "permissionKey": "canCreateBranch"
+    },
+    "controlType": {
+      "type": "select",
+      "label": "Control Type",
+      "placeholder": "Select control type",
+      "required": true,
+      "options": [
+        { "value": "", "label": "Select", "disabled": true },
+        { "value": "full", "label": "Full Control" },
+        { "value": "operational", "label": "Operational Control" },
+        { "value": "financial", "label": "Financial Control" },
+        { "value": "none", "label": "No Control" }
+      ],
+      "permissionKey": "canCreateBranch"
+    },
+    "equityPercent": {
+      "type": "number",
+      "label": "Equity Percentage",
+      "placeholder": "100",
+      "required": true,
+      "validations": ["percentageRange"],
+      "description": "Enter value between 0 and 100",
+      "constraints": {
+        "min": 0,
+        "max": 100
+      },
+      "permissionKey": "canCreateBranch"
+    },
+    "operationalBoundary": {
+      "type": "textarea",
+      "label": "Operational Boundary",
+      "placeholder": "Define the operational boundaries for this branch",
+      "required": false,
+      "rows": 2,
+      "constraints": {
+        "maxLength": 500
+      },
+      "permissionKey": "canCreateBranch"
+    },
+    "scopeOfActivity": {
+      "type": "textarea",
+      "label": "Scope of Activity",
+      "placeholder": "Describe the scope of activities performed at this branch",
+      "required": false,
+      "rows": 2,
+      "constraints": {
+        "maxLength": 500
+      },
+      "permissionKey": "canCreateBranch"
+    },
+    "branchCreatedBy": {
+      "type": "text",
+      "label": "Created By",
+      "placeholder": "System",
+      "required": true,
+      "disabled": true,
+      "constraints": {
+        "maxLength": 100
+      }
+    },
+    "branchCreatedAt": {
+      "type": "date",
+      "label": "Created Date",
+      "placeholder": "Select date",
+      "required": true,
+      "disabled": true
+    },
+    "branchUpdatedBy": {
+      "type": "text",
+      "label": "Updated By",
+      "placeholder": "-",
+      "required": false,
+      "disabled": true,
+      "constraints": {
+        "maxLength": 100
+      }
+    },
+    "branchUpdatedAt": {
+      "type": "date",
+      "label": "Updated Date",
+      "placeholder": "-",
+      "required": false,
+      "disabled": true
+    }
+  }
+}
