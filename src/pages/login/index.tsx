@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { usePermissions, USER_ROLES } from "../context/PermissionsContext";
 import { Lock, AlertCircle, Mail, Eye, EyeOff } from "lucide-react";
 import { createModuleLogger } from "../../utils/logger";
+import { toast } from "react-toastify";
 
 // Create module-specific logger
 const loginLogger = createModuleLogger("LoginPage");
@@ -55,7 +56,9 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>(
+    {}
+  );
 
   // ============ LOGGING: Page Mount ============
   useEffect(() => {
@@ -74,15 +77,19 @@ export default function LoginPage() {
   // Check if already authenticated
   useEffect(() => {
     const isAuthenticated = localStorage.getItem("isAuthenticated");
-    
+
     loginLogger.debug("AUTH_CHECK", "Checking authentication status", {
       isAuthenticated: isAuthenticated === "true",
     });
 
     if (isAuthenticated === "true") {
-      loginLogger.info("AUTH_REDIRECT", "User already authenticated, redirecting", {
-        destination: "/user-form",
-      });
+      loginLogger.info(
+        "AUTH_REDIRECT",
+        "User already authenticated, redirecting",
+        {
+          destination: "/user-form",
+        }
+      );
       router.replace("/user-form");
     }
   }, [router]);
@@ -136,7 +143,10 @@ export default function LoginPage() {
     });
 
     if (!validateForm()) {
-      loginLogger.warn("LOGIN_BLOCKED", "Login blocked due to validation errors");
+      loginLogger.warn(
+        "LOGIN_BLOCKED",
+        "Login blocked due to validation errors"
+      );
       return;
     }
 
@@ -154,8 +164,7 @@ export default function LoginPage() {
 
     const user = DUMMY_USERS.find(
       (u) =>
-        u.email.toLowerCase() === email.toLowerCase() &&
-        u.password === password
+        u.email.toLowerCase() === email.toLowerCase() && u.password === password
     );
 
     if (user) {
@@ -180,7 +189,7 @@ export default function LoginPage() {
         from: "/login",
         to: "/user-form",
       });
-
+      toast.success("Login Successfull");
       router.push("/user-form");
     } else {
       // ============ LOGGING: Failed Login ============
@@ -196,7 +205,7 @@ export default function LoginPage() {
     setIsLoading(false);
   };
 
-  const handleQuickLogin = (user: typeof DUMMY_USERS[0]) => {
+  const handleQuickLogin = (user: (typeof DUMMY_USERS)[0]) => {
     loginLogger.info("QUICK_LOGIN", "Quick login credentials selected", {
       selectedRole: user.role,
       selectedEmail: user.email,
@@ -211,7 +220,7 @@ export default function LoginPage() {
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newEmail = e.target.value;
     setEmail(newEmail);
-    
+
     loginLogger.trace("INPUT_CHANGE", "Email field updated", {
       fieldLength: newEmail.length,
     });
@@ -270,7 +279,10 @@ export default function LoginPage() {
 
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Email Address
               </label>
               <div className="relative">
@@ -295,7 +307,10 @@ export default function LoginPage() {
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Password
               </label>
               <div className="relative">
@@ -349,7 +364,9 @@ export default function LoginPage() {
 
         {/* Demo Credentials Card */}
         <div className="mt-6 bg-white rounded-xl shadow-lg p-6">
-          <h3 className="text-sm font-semibold text-gray-900 mb-4">Demo Credentials</h3>
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">
+            Demo Credentials
+          </h3>
           <div className="space-y-2 text-xs">
             {DUMMY_USERS.map((u) => (
               <div
@@ -461,7 +478,7 @@ export default function LoginPage() {
 //     if (!validateForm()) return;
 
 //     setIsLoading(true);
-    
+
 //     // Simulate API call
 //     await new Promise((r) => setTimeout(r, 1000));
 
