@@ -1,163 +1,82 @@
-// src/utils/runValidations.ts
-
-import validationsConfig from "../field_config/validations.config.json";
-
-const { validations, messages } = validationsConfig;
-
-interface Constraints {
+type Constraints = {
   minLength?: number;
   maxLength?: number;
-  min?: number;
-  max?: number;
-}
+};
 
-interface ValidationRule {
-  type: string;
-  pattern?: string;
-  exact?: number;
-  min?: number;
-  max?: number;
+type ValidationConfig = {
   message: string;
-  rules?: {
-    minLength?: number;
-    uppercase?: boolean;
-    lowercase?: boolean;
-    number?: boolean;
-    specialChar?: boolean;
-  };
-}
+};
+
+type ValidationsMap = Record<string, ValidationConfig>;
 
 export function runValidations(
-  value: any,
-  validationKeys: string[],
-  constraints: Constraints,
-  required: boolean
-): string {
-  const stringValue = value?.toString() ?? "";
+  value: string,
+  validationKeys: string[] = [],
+  validations: ValidationsMap,
+  constraints: Constraints = {}
+): string | null {
+  if (!value) return null;
 
-  // Check required
-  if (required && !stringValue.trim()) {
-    return messages.required;
+  if (
+    typeof constraints.minLength === "number" &&
+    value.length < constraints.minLength
+  ) {
+    return `Minimum length is ${constraints.minLength}`;
   }
 
-  // Skip other validations if empty and not required
-  if (!stringValue.trim() && !required) {
-    return "";
+  if (
+    typeof constraints.maxLength === "number" &&
+    value.length > constraints.maxLength
+  ) {
+    return `Maximum length is ${constraints.maxLength}`;
   }
 
-  // Check minLength constraint
-  if (constraints.minLength && stringValue.length < constraints.minLength) {
-    return messages.minLength.replace("{min}", String(constraints.minLength));
-  }
-
-  // Check maxLength constraint
-  if (constraints.maxLength && stringValue.length > constraints.maxLength) {
-    return messages.maxLength.replace("{max}", String(constraints.maxLength));
-  }
-
-  // Check min constraint (for numbers)
-  if (constraints.min !== undefined) {
-    const numValue = Number(value);
-    if (isNaN(numValue) || numValue < constraints.min) {
-      return messages.min.replace("{min}", String(constraints.min));
-    }
-  }
-
-  // Check max constraint (for numbers)
-  if (constraints.max !== undefined) {
-    const numValue = Number(value);
-    if (isNaN(numValue) || numValue > constraints.max) {
-      return messages.max.replace("{max}", String(constraints.max));
-    }
-  }
-
-  // Run custom validations
   for (const key of validationKeys) {
-    const rule = validations[key as keyof typeof validations] as ValidationRule;
-    if (!rule) continue;
-
-    switch (rule.type) {
-      case "regex":
-        if (rule.pattern) {
-          const regex = new RegExp(rule.pattern);
-          if (!regex.test(stringValue)) {
-            return rule.message;
-          }
+    switch (key) {
+      case "alphaOnly":
+        if (!/^[a-zA-Z]+$/.test(value)) {
+          return validations[key]?.message ?? "Invalid characters";
         }
         break;
 
-      case "length":
-        if (rule.exact && stringValue.length !== rule.exact) {
-          return rule.message;
+      case "emailFormat":
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          return validations[key]?.message ?? "Invalid email format";
         }
         break;
 
-      case "range":
-        const numVal = Number(value);
-        if (isNaN(numVal)) {
-          return messages.number;
-        }
-        if (rule.min !== undefined && numVal < rule.min) {
-          return rule.message;
-        }
-        if (rule.max !== undefined && numVal > rule.max) {
-          return rule.message;
+      case "noSpaces":
+        if (/\s/.test(value)) {
+          return validations[key]?.message ?? "Spaces are not allowed";
         }
         break;
 
-      case "composite":
-        if (rule.rules) {
-          const { minLength, uppercase, lowercase, number, specialChar } = rule.rules;
-          
-          if (minLength && stringValue.length < minLength) {
-            return rule.message;
-          }
-          if (uppercase && !/[A-Z]/.test(stringValue)) {
-            return rule.message;
-          }
-          if (lowercase && !/[a-z]/.test(stringValue)) {
-            return rule.message;
-          }
-          if (number && !/[0-9]/.test(stringValue)) {
-            return rule.message;
-          }
-          if (specialChar && !/[!@#$%^&*(),.?":{}|<>]/.test(stringValue)) {
-            return rule.message;
-          }
+      case "strongPassword":
+        if (
+          !/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])/.test(value)
+        ) {
+          return (
+            validations[key]?.message ??
+            "Password does not meet complexity requirements"
+          );
         }
+        break;
+
+      case "phoneFormat":
+        if (!/^[+]?[\d\s-]{10,15}$/.test(value)) {
+          return validations[key]?.message ?? "Invalid phone number";
+        }
+        break;
+      case "numericOnly":
+        if (!/^\d+$/.test(value)) {
+          return validations[key]?.message ?? "Only numbers are allowed";
+        }
+        break;
+
+      default:
         break;
     }
   }
 
-  return "";
-}
-
-export function validateForm(
-  values: Record<string, any>,
-  fieldsConfig: Record<string, any>,
-  fieldNames: string[]
-): Record<string, string> {
-  const errors: Record<string, string> = {};
-
-  for (const name of fieldNames) {
-    const config = fieldsConfig[name];
-    if (!config) continue;
-
-    const error = runValidations(
-      values[name],
-      config.validations || [],
-      config.constraints || {},
-      config.required || false
-    );
-
-    if (error) {
-      errors[name] = error;
-    }
-  }
-
-  return errors;
-}
-
-export function hasErrors(errors: Record<string, string>): boolean {
-  return Object.values(errors).some((error) => error !== "");
+  return null;
 }

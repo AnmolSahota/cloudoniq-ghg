@@ -4,7 +4,7 @@ export const loginAPI = (data: {
   email: string;
   password: string;
 }) => {
-  return axiosClient.post("/auth/login", data);
+  return axiosClient.post("/auth/register", data);
 };
 
 export const logoutAPI = () => {

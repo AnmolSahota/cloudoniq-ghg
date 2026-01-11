@@ -1,95 +1,22 @@
 {
   "validations": {
-    "emailFormat": {
-      "type": "regex",
-      "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
-      "message": "Please enter a valid email address"
-    },
     "alphaOnly": {
-      "type": "regex",
-      "pattern": "^[A-Za-z]+$",
       "message": "Only alphabetic characters are allowed"
     },
-    "alphaSpaces": {
-      "type": "regex",
-      "pattern": "^[A-Za-z ]+$",
-      "message": "Only letters and spaces are allowed"
-    },
-    "alphaNumericSpaces": {
-      "type": "regex",
-      "pattern": "^[A-Za-z0-9 ]+$",
-      "message": "Only letters, numbers, and spaces are allowed"
-    },
-    "alphaNumericUppercase": {
-      "type": "regex",
-      "pattern": "^[A-Z0-9]+$",
-      "message": "Only uppercase letters and numbers are allowed"
-    },
-    "alphaNumeric": {
-      "type": "regex",
-      "pattern": "^[A-Za-z0-9]+$",
-      "message": "Only letters and numbers are allowed"
-    },
-    "numericOnly": {
-      "type": "regex",
-      "pattern": "^[0-9]+$",
-      "message": "Only numbers are allowed"
-    },
-    "phoneFormat": {
-      "type": "regex",
-      "pattern": "^[+]?[0-9]{10,15}$",
-      "message": "Enter valid phone number (10-15 digits)"
-    },
-    "fixedLength6": {
-      "type": "length",
-      "exact": 6,
-      "message": "Must be exactly 6 characters"
-    },
-    "postalCodeFormat": {
-      "type": "regex",
-      "pattern": "^[A-Za-z0-9\\s-]{3,10}$",
-      "message": "Enter valid postal code (3-10 characters)"
-    },
-    "addressFormat": {
-      "type": "regex",
-      "pattern": "^[A-Za-z0-9\\s,.-/#]+$",
-      "message": "Only letters, numbers, spaces, and basic punctuation allowed"
-    },
-    "coordinatesFormat": {
-      "type": "regex",
-      "pattern": "^-?([1-8]?[0-9]\\.{1}\\d+|90\\.{1}0+),\\s*-?((1[0-7][0-9]|[1-9]?[0-9])\\.{1}\\d+|180\\.{1}0+)$",
-      "message": "Enter valid coordinates (e.g., 40.7128, -74.0060)"
-    },
-    "positiveNumber": {
-      "type": "range",
-      "min": 0,
-      "message": "Must be a positive number"
-    },
-    "percentageRange": {
-      "type": "range",
-      "min": 0,
-      "max": 100,
-      "message": "Must be between 0 and 100"
+    "emailFormat": {
+      "message": "Invalid email address"
     },
     "strongPassword": {
-      "type": "composite",
-      "rules": {
-        "minLength": 8,
-        "uppercase": true,
-        "lowercase": true,
-        "number": true,
-        "specialChar": true
-      },
-      "message": "Password must have 8+ chars with uppercase, lowercase, number & special char"
-    } 
-  },
-  "messages": {
-    "required": "This field is required",
-    "minLength": "Must be at least {min} characters",
-    "maxLength": "Must be no more than {max} characters",
-    "min": "Must be at least {min}",
-    "max": "Must be no more than {max}",
-    "select": "Please select an option",
-    "number": "Please enter a valid number"
+      "message": "Password must contain uppercase, lowercase, number, and symbol"
+    },
+    "noSpaces": {
+      "message": "Spaces are not allowed"
+    },
+    "phoneFormat": {
+      "message": "Invalid phone number"
+    },
+    "numericOnly": {
+      "message": "Only numbers are allowed"
+    }
   }
 }

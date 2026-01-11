@@ -1,451 +1,335 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { toast } from "sonner";
-import { Building2, Plus, Lock, History } from "lucide-react";
-import { BranchList } from "./branch-list";
-import { BranchDialog, BranchFormData } from "./branch-dialog";
-import { usePermissions} from "../../pages/context/PermissionsContext";
-import { Alert, AlertDescription } from "../ui/alert";
-import { AuditHistoryTab } from "./audit-history-tab";
-import { OrganizationAuditDialog } from "./organization-audit-dialog";
+// src/components/organization/organization-form.tsx
+import React, { useState } from "react";
+import { Building2, Save, RotateCcw, MapPin } from "lucide-react";
+import Input from "../ui/input/Input";
+import { runValidations } from "../../utils/runValidations";
+import { toast } from "react-toastify";
 
-const organizationSchema = z.object({
-  org_code: z.string().min(1, "Organization code is required"),
-  name: z.string().min(1, "Organization name is required"),
-  description: z.string().optional(),
-  industry_type: z.string().min(1, "Industry type is required"),
-  country: z.string().min(1, "Country is required"),
-  city: z.string().min(1, "City is required"),
-  ownership_type: z.string().min(1, "Ownership type is required"),
-  created_by: z.string().min(1, "Created by is required"),
-  created_at: z.string().min(1, "Created date is required"),
-  updated_by: z.string().optional(),
-  updated_at: z.string().optional(),
-  deleted_by: z.string().optional(),
-  deleted_at: z.string().optional(),
-});
+// Use existing config files (same as register)
+import fieldsConfig from "../../field_config/fields.config.json";
+import validationsConfig from "../../field_config/validations.config.json";
 
-type OrganizationFormData = z.infer<typeof organizationSchema>;
-type Branch = BranchFormData & { id: string };
+// Type definitions
+type FieldConfig = {
+  type: string;
+  label: string;
+  placeholder: string;
+  required: boolean;
+  rows?: number;
+  colSpan?: number;
+  constraints?: {
+    minLength?: number;
+    maxLength?: number;
+  };
+  validations?: string[];
+};
+
+type OrganizationData = {
+  organizationCode: string;
+  organizationName: string;
+  address: string;
+};
+
+type FormErrors = Partial<Record<keyof OrganizationData, string>>;
+
+interface Organization extends OrganizationData {
+  id: string;
+  createdAt: string;
+}
+
+const initialFormData: OrganizationData = {
+  organizationCode: "",
+  organizationName: "",
+  address: "",
+};
 
 export function OrganizationForm() {
-  const { permissions, canEditBranch, canViewBranch } = usePermissions();
-  const [branches, setBranches] = useState<Branch[]>([]);
-  const [activeTab, setActiveTab] = useState("organization");
-  const [branchDialogOpen, setBranchDialogOpen] = useState(false);
-  const [editingBranch, setEditingBranch] = useState<Branch | undefined>();
-  const [dialogMode, setDialogMode] = useState<"add" | "edit">("add");
-  const [isReadOnly, setIsReadOnly] = useState(false);
-  const [orgAuditDialogOpen, setOrgAuditDialogOpen] = useState(false);
+  // Get fields and validations from existing config
+  const { fields } = fieldsConfig;
+  const { validations } = validationsConfig;
 
-  const organizationForm = useForm<OrganizationFormData>({
-    resolver: zodResolver(organizationSchema),
-    defaultValues: {
-      org_code: "",
-      name: "",
-      description: "",
-      industry_type: "",
-      country: "",
-      city: "",
-      ownership_type: "",
-      created_by: "",
-      created_at: new Date().toISOString().split('T')[0],
-      updated_by: "",
-      updated_at: "",
-      deleted_by: "",
-      deleted_at: "",
-    },
-  });
+  const [formData, setFormData] = useState<OrganizationData>(initialFormData);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const onOrganizationSubmit = (data: OrganizationFormData) => {
-    console.log("Organization Data:", data);
-    console.log("Branches:", branches);
+  // Validate field using runValidations and config
+  const validateField = (fieldName: keyof OrganizationData, value: string): string | null => {
+    const fieldConfig = fields[fieldName] as FieldConfig;
+
+    if (!fieldConfig) return null;
+
+    // Required check from config
+    if (fieldConfig.required && !value.trim()) {
+      return `${fieldConfig.label} is required`;
+    }
+
+    if (!value.trim()) return null;
+
+    // Use runValidations function with config
+    return runValidations(
+      value,
+      fieldConfig.validations || [],
+      validations,
+      fieldConfig.constraints || {}
+    );
+  };
+
+  // Validate all fields
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+    let isValid = true;
+
+    (Object.keys(formData) as Array<keyof OrganizationData>).forEach((field) => {
+      const error = validateField(field, formData[field]);
+      if (error) {
+        newErrors[field] = error;
+        isValid = false;
+      }
+    });
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  // Handle change (same pattern as register)
+  const handleChange = (field: keyof OrganizationData) => (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const value = e.target.value;
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
+    if (touched[field] && errors[field]) {
+      const error = validateField(field, value);
+      setErrors((prev) => ({ ...prev, [field]: error || undefined }));
+    }
+  };
+
+  // Handle blur (same pattern as register)
+  const handleBlur = (field: keyof OrganizationData) => () => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    const error = validateField(field, formData[field]);
+    setErrors((prev) => ({ ...prev, [field]: error || undefined }));
+  };
+
+  // Handle submit
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Mark all fields as touched
+    const allTouched: Record<string, boolean> = {};
+    Object.keys(formData).forEach((key) => {
+      allTouched[key] = true;
+    });
+    setTouched(allTouched);
+
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    const newOrg: Organization = {
+      ...formData,
+      id: `org-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+    };
+
+    setOrganizations((prev) => [...prev, newOrg]);
+    setFormData(initialFormData);
+    setTouched({});
+    setErrors({});
     toast.success("Organization created successfully!");
-    
-    // Reset forms
-    organizationForm.reset();
-    setBranches([]);
-    setActiveTab("organization");
+    setIsSubmitting(false);
   };
 
-  const handleAddBranch = () => {
-    setDialogMode("add");
-    setEditingBranch(undefined);
-    setIsReadOnly(false);
-    setBranchDialogOpen(true);
+  // Handle reset
+  const handleReset = () => {
+    setFormData(initialFormData);
+    setErrors({});
+    setTouched({});
   };
 
-  const handleEditBranch = (branch: Branch) => {
-    if (!canEditBranch(branch.id)) {
-      // Open in read-only mode
-      setIsReadOnly(true);
-    } else {
-      setIsReadOnly(false);
-    }
-    setDialogMode("edit");
-    setEditingBranch(branch);
-    setBranchDialogOpen(true);
+  // Handle delete
+  const handleDelete = (id: string) => {
+    setOrganizations((prev) => prev.filter((org) => org.id !== id));
+    toast.success("Organization deleted!");
   };
-
-  const handleDeleteBranch = (id: string) => {
-    setBranches(branches.filter(b => b.id !== id));
-    toast.success("Branch removed");
-  };
-
-  const handleBranchSubmit = (data: BranchFormData) => {
-    if (dialogMode === "edit" && editingBranch) {
-      // Update existing branch
-      setBranches(branches.map(b => 
-        b.id === editingBranch.id ? { ...data, id: b.id } : b
-      ));
-      toast.success("Branch updated successfully!");
-    } else {
-      // Add new branch
-      const newBranch = {
-        ...data,
-        id: Math.random().toString(36).substr(2, 9),
-      };
-      setBranches([...branches, newBranch]);
-      toast.success("Branch added successfully!");
-    }
-  };
-
-  // Filter branches based on user permissions
-  const visibleBranches = branches.filter(branch => canViewBranch(branch.id));
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-gray-900 font-semibold">
-          <Building2 className="h-5 w-5 text-gray-900" />
-          {permissions.canEditOrganization ? "Create Organization" : "View Organization"}
-          {!permissions.canEditOrganization && (
-            <Lock className="h-4 w-4 text-gray-500 ml-2" />
-          )}
-        </CardTitle>
-        <CardDescription className="text-gray-700 font-medium">
-          {permissions.canEditOrganization 
-            ? "Enter organization details and manage branch locations"
-            : "Organization details (Read-only access)"}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        {!permissions.canViewOrganization && (
-          <Alert>
-            <Lock className="h-4 w-4" />
-            <AlertDescription className="text-gray-900">
-              You do not have permission to view organization details.
-            </AlertDescription>
-          </Alert>
-        )}
-        
-        {permissions.canViewOrganization && (
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3 h-auto">
-            <TabsTrigger value="organization" className="text-xs sm:text-sm py-2 font-medium text-black">
-              <span className="hidden sm:inline text-black">Organization</span>
-              <span className="sm:hidden">Org</span>
-              {!permissions.canEditOrganization && (
-                <span className="hidden lg:inline text-black"> (Read-only)</span>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="branches" className="text-xs sm:text-sm py-2 font-medium text-black">
-              <span className="hidden sm:inline text-black">Branches ({visibleBranches.length})</span>
-              <span className="sm:hidden">Br ({visibleBranches.length})</span>
-              {!permissions.canEditAllBranches && !permissions.canCreateBranch && (
-                <span className="hidden lg:inline text-black"> (Read-only)</span>
-              )}
-            </TabsTrigger>
-            {/* <TabsTrigger value="audit" className="text-xs sm:text-sm py-2 font-medium text-black">
-              <span className="hidden sm:inline text-black">Audit History</span>
-              <span className="sm:hidden">Audit</span>
-            </TabsTrigger> */}
-          </TabsList>
+    <div className="space-y-6">
+      {/* Form Card */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-indigo-100 rounded-lg">
+            <Building2 className="w-5 h-5 text-indigo-600" />
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Add New Organization
+            </h2>
+            <p className="text-sm text-gray-500">
+              Fill in the details below to create a new organization
+            </p>
+          </div>
+        </div>
 
-          <TabsContent value="organization" className="space-y-4 mt-6">
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-              <div>
-                <h3 className="text-gray-900 font-semibold text-lg">Organization Information</h3>
-                <p className="text-gray-700 mt-1 hidden sm:block">Enter the basic details for the organization</p>
-              </div>
-              <Button 
-                type="button" 
-                variant="outline" 
-                size="sm"
-                onClick={() => setOrgAuditDialogOpen(true)}
-                className="w-full sm:w-auto"
-              >
-                <History className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">View Audit History</span>
-                <span className="sm:hidden">Audit History</span>
-              </Button>
-            </div>
-            <Form {...organizationForm}>
-              <form onSubmit={organizationForm.handleSubmit(onOrganizationSubmit)} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={organizationForm.control}
-                    name="org_code"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-900 font-medium">Organization Code *</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="ORG001" 
-                            {...field} 
-                            disabled={!permissions.canEditOrganization}
-                            className="text-gray-900"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={organizationForm.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-900 font-medium">Organization Name *</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="Acme Corporation" 
-                            {...field} 
-                            disabled={!permissions.canEditOrganization}
-                            className="text-gray-900"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <FormField
-                  control={organizationForm.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-gray-900 font-medium">Description</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="Brief description of the organization"
-                          className="resize-none text-gray-900"
-                          rows={3}
-                          {...field}
-                          disabled={!permissions.canEditOrganization}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={organizationForm.control}
-                    name="industry_type"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-900 font-medium">Industry Type *</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
-                          disabled={!permissions.canEditOrganization}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="text-gray-900">
-                              <SelectValue placeholder="Select industry type" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="manufacturing">Manufacturing</SelectItem>
-                            <SelectItem value="technology">Technology</SelectItem>
-                            <SelectItem value="healthcare">Healthcare</SelectItem>
-                            <SelectItem value="finance">Finance</SelectItem>
-                            <SelectItem value="retail">Retail</SelectItem>
-                            <SelectItem value="services">Services</SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={organizationForm.control}
-                    name="ownership_type"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-900 font-medium">Ownership Type *</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
-                          disabled={!permissions.canEditOrganization}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="text-gray-900">
-                              <SelectValue placeholder="Select ownership type" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="private">Private</SelectItem>
-                            <SelectItem value="public">Public</SelectItem>
-                            <SelectItem value="government">Government</SelectItem>
-                            <SelectItem value="non-profit">Non-Profit</SelectItem>
-                            <SelectItem value="partnership">Partnership</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={organizationForm.control}
-                    name="country"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-900 font-medium">Country *</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="United States" 
-                            {...field} 
-                            disabled={!permissions.canEditOrganization}
-                            className="text-gray-900"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={organizationForm.control}
-                    name="city"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-900 font-medium">City *</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="New York" 
-                            {...field} 
-                            disabled={!permissions.canEditOrganization}
-                            className="text-gray-900"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className="flex flex-col sm:flex-row justify-end gap-3">
-                  {/* <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setActiveTab("branches")}
-                    className="w-full sm:w-auto"
-                  >
-                    <span className="hidden sm:inline">Next: Manage Branches</span>
-                    <span className="sm:hidden">Next: Branches</span>
-                  </Button> */}
-                  {permissions.canEditOrganization && (
-                    <Button type="submit" className="w-full sm:w-auto text-black border-b-2">
-                      Create Organization
-                    </Button>
-                  )}
-                </div>
-              </form>
-            </Form>
-          </TabsContent>
-
-          <TabsContent value="branches" className="space-y-6 mt-6">
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-              <div>
-                <h3 className="text-gray-900 font-semibold text-lg">Branch Management</h3>
-                <p className="text-gray-700 mt-1 hidden sm:block">
-                  {permissions.canCreateBranch || permissions.canEditAllBranches
-                    ? "Add, edit, and manage all branch locations"
-                    : "View branch locations"}
-                </p>
-              </div>
-              {permissions.canCreateBranch && (
-                <Button onClick={handleAddBranch} className="w-full sm:w-auto text-black">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Branch
-                </Button>
-              )}
-            </div>
-
-            {!permissions.canViewAllBranches && visibleBranches.length === 0 && (
-              <Alert>
-                <Lock className="h-4 w-4" />
-                <AlertDescription className="text-gray-900">
-                  You do not have permission to view any branches. Contact your administrator for access.
-                </AlertDescription>
-              </Alert>
-            )}
-
-            <BranchList
-              branches={visibleBranches}
-              onEdit={handleEditBranch}
-              onDelete={handleDeleteBranch}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Organization Code & Name - Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Organization Code */}
+            <Input
+              name="organizationCode"
+              type={fields.organizationCode.type}
+              label={fields.organizationCode.label}
+              placeholder={fields.organizationCode.placeholder}
+              value={formData.organizationCode}
+              onChange={handleChange("organizationCode")}
+              onBlur={handleBlur("organizationCode")}
+              error={touched.organizationCode ? errors.organizationCode : undefined}
+              required={fields.organizationCode.required}
+              leftIcon={<Building2 className="h-5 w-5" />}
+              maxLength={fields.organizationCode.constraints?.maxLength}
             />
 
-            {branches.length > 0 && permissions.canEditOrganization && (
-              <div className="border-t pt-6">
-                <Button
-                  type="button"
-                  onClick={() => {
-                    const orgData = organizationForm.getValues();
-                    organizationForm.handleSubmit(onOrganizationSubmit)();
-                  }}
-                  className="w-full"
-                >
-                  Create Organization with {branches.length} Branch{branches.length !== 1 ? 'es' : ''}
-                </Button>
-              </div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="audit" className="mt-6">
-            <AuditHistoryTab 
-              organizationData={organizationForm.getValues()}
-              branches={branches}
+            {/* Organization Name */}
+            <Input
+              name="organizationName"
+              type={fields.organizationName.type}
+              label={fields.organizationName.label}
+              placeholder={fields.organizationName.placeholder}
+              value={formData.organizationName}
+              onChange={handleChange("organizationName")}
+              onBlur={handleBlur("organizationName")}
+              error={touched.organizationName ? errors.organizationName : undefined}
+              required={fields.organizationName.required}
+              leftIcon={<Building2 className="h-5 w-5" />}
             />
-          </TabsContent>
-        </Tabs>
-        )}
-      </CardContent>
+          </div>
 
-      <BranchDialog
-        open={branchDialogOpen}
-        onOpenChange={setBranchDialogOpen}
-        onSubmit={handleBranchSubmit}
-        branch={editingBranch}
-        mode={dialogMode}
-        readOnly={isReadOnly}
-      />
+          {/* Address - Textarea */}
+          <div>
+            <label
+              htmlFor="address"
+              className="mb-1 block text-sm font-medium text-slate-700"
+            >
+              {fields.address.label}
+            </label>
+            <div className="relative">
+              <span className="pointer-events-none absolute top-3 left-0 flex items-center pl-3 text-slate-400">
+                <MapPin className="h-5 w-5" />
+              </span>
+              <textarea
+                id="address"
+                name="address"
+                rows={fields.address.rows || 2}
+                placeholder={fields.address.placeholder}
+                value={formData.address}
+                onChange={handleChange("address")}
+                onBlur={handleBlur("address")}
+                maxLength={fields.address.constraints?.maxLength}
+                className={`block w-full rounded-md border bg-white text-slate-900 placeholder-slate-400 
+                  transition-colors outline-none pl-10 pr-3 py-2
+                  focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
+                  ${touched.address && errors.address ? "border-red-500" : "border-slate-300"}`}
+              />
+            </div>
+            {touched.address && errors.address && (
+              <p className="mt-1 text-xs text-red-600">{errors.address}</p>
+            )}
+            <p className="mt-1 text-xs text-slate-500">
+              {formData.address.length}/{fields.address.constraints?.maxLength} characters
+            </p>
+          </div>
 
-      <OrganizationAuditDialog
-        open={orgAuditDialogOpen}
-        onOpenChange={setOrgAuditDialogOpen}
-        organization={organizationForm.getValues()}
-      />
-    </Card>
+          {/* Action Buttons */}
+          <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white 
+                rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 
+                disabled:cursor-not-allowed font-medium"
+            >
+              {isSubmitting ? (
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              {isSubmitting ? "Saving..." : "Save Organization"}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleReset}
+              className="flex items-center gap-2 px-4 py-2 border border-gray-300 
+                text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Reset
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* Organizations List */}
+      {organizations.length > 0 && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Organizations ({organizations.length})
+          </h3>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-3 px-4 font-medium text-gray-600">Code</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-600">Name</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-600">Address</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-600">Created</th>
+                  <th className="text-right py-3 px-4 font-medium text-gray-600">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {organizations.map((org) => (
+                  <tr key={org.id} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="py-3 px-4">
+                      <span className="inline-flex items-center px-2 py-1 rounded-md bg-indigo-50 text-indigo-700 font-mono text-xs">
+                        {org.organizationCode}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 font-medium text-gray-900">{org.organizationName}</td>
+                    <td className="py-3 px-4 text-gray-600 max-w-xs truncate">{org.address || "-"}</td>
+                    <td className="py-3 px-4 text-gray-500">
+                      {new Date(org.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="py-3 px-4 text-right">
+                      <button
+                        onClick={() => handleDelete(org.id)}
+                        className="text-red-600 hover:text-red-700 text-sm font-medium"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Empty State */}
+      {organizations.length === 0 && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+          <Building2 className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+          <h3 className="text-gray-600 font-medium">No organizations yet</h3>
+          <p className="text-sm text-gray-400 mt-1">
+            Create your first organization using the form above
+          </p>
+        </div>
+      )}
+    </div>
   );
 }

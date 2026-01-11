@@ -12,7 +12,7 @@ export default function OrganizationPage() {
   useEffect(() => {
     const auth = localStorage.getItem("isAuthenticated");
     if (auth !== "true") {
-      router.replace("/login");
+      router.replace("/register");
     } else {
       setIsAuthenticated(true);
     }
@@ -49,13 +49,6 @@ export default function OrganizationPage() {
                 <span className="hidden sm:inline">Back to Dashboard</span>
               </button>
             </div>
-            <button
-              onClick={() => router.push("/user-form")}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors"
-            >
-              <Home className="w-4 h-4" />
-              <span className="hidden sm:inline">Dashboard</span>
-            </button>
           </div>
         </div>
       </header>

@@ -16,7 +16,7 @@ const initialState: AuthState = {
 };
 
 export const login = createAsyncThunk(
-  "auth/login",
+  "auth/register",
   async (payload: { email: string; password: string }, { rejectWithValue }) => {
     try {
       const res = await loginAPI(payload);

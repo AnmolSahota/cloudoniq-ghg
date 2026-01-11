@@ -24,12 +24,12 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
             setIsAuthenticated(true);
             setIsLoading(false);
           } else {
-            router.replace("/login");
+            router.replace("/register");
           }
         }
       } catch (error) {
         console.error("Auth check error:", error);
-        router.replace("/login");
+        router.replace("/register");
       }
     };
 

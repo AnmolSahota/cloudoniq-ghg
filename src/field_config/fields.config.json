@@ -1,108 +1,61 @@
 {
   "fields": {
+    "name": {
+      "type": "text",
+      "label": "Name",
+      "placeholder": "Enter your name",
+      "required": true,
+      "constraints": {
+        "minLength": 0,
+        "maxLength": 50
+      },
+      "validations": ["alphaOnly"]
+    },
     "email": {
       "type": "email",
       "label": "Email Address",
       "placeholder": "Enter your email",
       "required": true,
-      "icon": "mail",
-      "validations": ["emailFormat"],
+      "validations": ["emailFormat"]
+    },
+    "userId": {
+      "type": "text",
+      "label": "User ID",
+      "placeholder": "Enter user ID",
+      "required": true,
       "constraints": {
-        "maxLength": 100
+        "minLength": 4,
+        "maxLength": 20
       }
     },
     "password": {
       "type": "password",
       "label": "Password",
-      "placeholder": "Enter your password",
+      "placeholder": "Enter password",
       "required": true,
       "icon": "lock",
       "showToggle": true,
-      "validations": [],
       "constraints": {
-        "minLength": 1
-      }
+        "minLength": 8
+      },
+      "validations": ["strongPassword"]
     },
-    "firstName": {
+    "organizationCode": {
       "type": "text",
-      "label": "First Name",
-      "placeholder": "Enter first name",
+      "label": "Organization Code",
+      "placeholder": "ORG-XXXX",
       "required": true,
-      "validations": ["alphaOnly"],
       "constraints": {
-        "minLength": 2,
-        "maxLength": 50
+        "minLength": 4,
+        "maxLength": 10
       },
-      "permissionKey": "canCreateUser"
+      "validations": ["noSpaces"]
     },
-    "lastName": {
+    "organizationName": {
       "type": "text",
-      "label": "Last Name",
-      "placeholder": "Enter last name",
-      "required": true,
-      "validations": ["alphaOnly"],
-      "constraints": {
-        "minLength": 2,
-        "maxLength": 50
-      },
-      "permissionKey": "canCreateUser"
-    },
-    "phone": {
-      "type": "tel",
-      "label": "Phone",
-      "placeholder": "Enter phone number",
-      "required": true,
-      "icon": "phone",
-      "validations": ["phoneFormat"],
-      "constraints": {
-        "minLength": 10,
-        "maxLength": 15
-      },
-      "permissionKey": "canCreateUser"
-    },
-    "department": {
-      "type": "select",
-      "label": "Department",
-      "placeholder": "Select department",
-      "required": true,
-      "options": [
-        { "value": "", "label": "Select", "disabled": true },
-        { "value": "engineering", "label": "Engineering" },
-        { "value": "sales", "label": "Sales" },
-        { "value": "marketing", "label": "Marketing" },
-        { "value": "hr", "label": "HR" },
-        { "value": "finance", "label": "Finance" },
-        { "value": "operations", "label": "Operations" }
-      ],
-      "permissionKey": "canCreateUser"
-    },
-    "designation": {
-      "type": "text",
-      "label": "Designation",
-      "placeholder": "Enter designation",
-      "required": true,
-      "validations": ["alphaNumericSpaces"],
-      "constraints": {
-        "minLength": 2,
-        "maxLength": 50
-      },
-      "permissionKey": "canCreateUser"
-    },
-    "branch": {
-      "type": "select",
-      "label": "Branch",
-      "placeholder": "Select branch",
-      "required": true,
-      "options": [
-        { "value": "", "label": "Select", "disabled": true },
-        { "value": "mumbai", "label": "Mumbai" },
-        { "value": "delhi", "label": "Delhi" },
-        { "value": "bangalore", "label": "Bangalore" },
-        { "value": "chennai", "label": "Chennai" },
-        { "value": "hyderabad", "label": "Hyderabad" },
-        { "value": "pune", "label": "Pune" }
-      ],
-      "permissionKey": "canCreateUser"
+      "label": "Organization Name",
+      "placeholder": "Enter organization name",
+      "required": true
     },
     "address": {
       "type": "textarea",
@@ -113,431 +66,105 @@
       "colSpan": 3,
       "constraints": {
         "maxLength": 200
+      }
+    },
+    "firstName": {
+      "type": "text",
+      "label": "First Name",
+      "placeholder": "Enter first name",
+      "required": true,
+      "constraints": {
+        "minLength": 2,
+        "maxLength": 50
       },
-      "permissionKey": "canCreateUser"
+      "validations": ["alphaOnly"]
+    },
+    "lastName": {
+      "type": "text",
+      "label": "Last Name",
+      "placeholder": "Enter last name",
+      "required": true,
+      "constraints": {
+        "minLength": 2,
+        "maxLength": 50
+      },
+      "validations": ["alphaOnly"]
+    },
+    "phone": {
+      "type": "tel",
+      "label": "Phone",
+      "placeholder": "+91 98765 43210",
+      "required": true,
+      "constraints": {
+        "minLength": 10,
+        "maxLength": 15
+      },
+      "validations": ["phoneFormat"]
+    },
+    "department": {
+      "type": "select",
+      "label": "Department",
+      "placeholder": "Select Department",
+      "required": true,
+      "options": [
+        { "value": "engineering", "label": "Engineering" },
+        { "value": "sales", "label": "Sales" },
+        { "value": "marketing", "label": "Marketing" },
+        { "value": "hr", "label": "HR" },
+        { "value": "finance", "label": "Finance" },
+        { "value": "operations", "label": "Operations" }
+      ]
+    },
+    "designation": {
+      "type": "text",
+      "label": "Designation",
+      "placeholder": "e.g. Senior Developer",
+      "required": true,
+      "constraints": {
+        "maxLength": 50
+      }
+    },
+    "branch": {
+      "type": "select",
+      "label": "Branch",
+      "placeholder": "Select Branch",
+      "required": true,
+      "options": [
+        { "value": "mumbai", "label": "Mumbai - Head Office" },
+        { "value": "delhi", "label": "Delhi - North Zone" },
+        { "value": "bangalore", "label": "Bangalore - South Zone" },
+        { "value": "chennai", "label": "Chennai - East Zone" },
+        { "value": "pune", "label": "Pune - West Zone" }
+      ]
     },
     "city": {
       "type": "text",
       "label": "City",
       "placeholder": "Enter city",
       "required": false,
-      "validations": ["alphaSpaces"],
       "constraints": {
         "maxLength": 50
-      },
-      "permissionKey": "canCreateUser"
+      }
     },
     "state": {
       "type": "text",
       "label": "State",
       "placeholder": "Enter state",
       "required": false,
-      "validations": ["alphaSpaces"],
       "constraints": {
         "maxLength": 50
-      },
-      "permissionKey": "canCreateUser"
+      }
     },
     "pincode": {
       "type": "text",
       "label": "Pincode",
       "placeholder": "Enter pincode",
       "required": false,
-      "validations": ["numericOnly", "fixedLength6"],
       "constraints": {
         "minLength": 6,
         "maxLength": 6
       },
-      "permissionKey": "canCreateUser"
-    },
-    "role": {
-      "type": "select",
-      "label": "Role",
-      "placeholder": "Select role",
-      "required": true,
-      "defaultValue": "viewer",
-      "options": [
-        { "value": "viewer", "label": "Viewer" },
-        { "value": "branch_manager", "label": "Branch Manager" },
-        { "value": "org_manager", "label": "Org Manager" },
-        { "value": "admin", "label": "Admin" }
-      ],
-      "permissionKey": "canManageUserRoles",
-      "showPermissionWarning": true
-    },
-    "status": {
-      "type": "select",
-      "label": "Status",
-      "placeholder": "Select status",
-      "required": true,
-      "defaultValue": "active",
-      "options": [
-        { "value": "active", "label": "Active" },
-        { "value": "inactive", "label": "Inactive" },
-        { "value": "suspended", "label": "Suspended" }
-      ],
-      "permissionKey": "canCreateUser"
-    },
-    "orgCode": {
-      "type": "text",
-      "label": "Organization Code",
-      "placeholder": "ORG001",
-      "required": true,
-      "validations": ["alphaNumericUppercase"],
-      "constraints": {
-        "minLength": 3,
-        "maxLength": 20
-      },
-      "permissionKey": "canEditOrganization"
-    },
-    "orgName": {
-      "type": "text",
-      "label": "Organization Name",
-      "placeholder": "Acme Corporation",
-      "required": true,
-      "validations": ["alphaNumericSpaces"],
-      "constraints": {
-        "minLength": 2,
-        "maxLength": 100
-      },
-      "permissionKey": "canEditOrganization"
-    },
-    "orgDescription": {
-      "type": "textarea",
-      "label": "Description",
-      "placeholder": "Brief description of the organization",
-      "required": false,
-      "rows": 3,
-      "constraints": {
-        "maxLength": 500
-      },
-      "permissionKey": "canEditOrganization"
-    },
-    "industryType": {
-      "type": "select",
-      "label": "Industry Type",
-      "placeholder": "Select industry type",
-      "required": true,
-      "options": [
-        { "value": "", "label": "Select", "disabled": true },
-        { "value": "manufacturing", "label": "Manufacturing" },
-        { "value": "technology", "label": "Technology" },
-        { "value": "healthcare", "label": "Healthcare" },
-        { "value": "finance", "label": "Finance" },
-        { "value": "retail", "label": "Retail" },
-        { "value": "services", "label": "Services" },
-        { "value": "education", "label": "Education" },
-        { "value": "other", "label": "Other" }
-      ],
-      "permissionKey": "canEditOrganization"
-    },
-    "ownershipType": {
-      "type": "select",
-      "label": "Ownership Type",
-      "placeholder": "Select ownership type",
-      "required": true,
-      "options": [
-        { "value": "", "label": "Select", "disabled": true },
-        { "value": "private", "label": "Private" },
-        { "value": "public", "label": "Public" },
-        { "value": "government", "label": "Government" },
-        { "value": "non_profit", "label": "Non-Profit" },
-        { "value": "partnership", "label": "Partnership" }
-      ],
-      "permissionKey": "canEditOrganization"
-    },
-    "orgCountry": {
-      "type": "text",
-      "label": "Country",
-      "placeholder": "India",
-      "required": true,
-      "validations": ["alphaSpaces"],
-      "constraints": {
-        "minLength": 2,
-        "maxLength": 50
-      },
-      "permissionKey": "canEditOrganization"
-    },
-    "orgCity": {
-      "type": "text",
-      "label": "City",
-      "placeholder": "Mumbai",
-      "required": true,
-      "validations": ["alphaSpaces"],
-      "constraints": {
-        "minLength": 2,
-        "maxLength": 50
-      },
-      "permissionKey": "canEditOrganization"
-    },
-    "createdBy": {
-      "type": "text",
-      "label": "Created By",
-      "placeholder": "System",
-      "required": true,
-      "disabled": true,
-      "constraints": {
-        "maxLength": 100
-      }
-    },
-    "createdAt": {
-      "type": "date",
-      "label": "Created Date",
-      "placeholder": "Select date",
-      "required": true,
-      "disabled": true
-    },
-    "updatedBy": {
-      "type": "text",
-      "label": "Updated By",
-      "placeholder": "-",
-      "required": false,
-      "disabled": true,
-      "constraints": {
-        "maxLength": 100
-      }
-    },
-    "updatedAt": {
-      "type": "date",
-      "label": "Updated Date",
-      "placeholder": "-",
-      "required": false,
-      "disabled": true
-    },
-    "branchCode": {
-      "type": "text",
-      "label": "Branch Code",
-      "placeholder": "BR001",
-      "required": true,
-      "validations": ["alphaNumericUppercase"],
-      "constraints": {
-        "minLength": 2,
-        "maxLength": 20
-      },
-      "permissionKey": "canCreateBranch"
-    },
-    "branchName": {
-      "type": "text",
-      "label": "Branch Name",
-      "placeholder": "Main Office",
-      "required": true,
-      "validations": ["alphaNumericSpaces"],
-      "constraints": {
-        "minLength": 2,
-        "maxLength": 100
-      },
-      "permissionKey": "canCreateBranch"
-    },
-    "branchType": {
-      "type": "select",
-      "label": "Branch Type",
-      "placeholder": "Select branch type",
-      "required": true,
-      "options": [
-        { "value": "", "label": "Select", "disabled": true },
-        { "value": "headquarters", "label": "Headquarters" },
-        { "value": "regional", "label": "Regional Office" },
-        { "value": "branch", "label": "Branch Office" },
-        { "value": "warehouse", "label": "Warehouse" },
-        { "value": "retail", "label": "Retail Store" },
-        { "value": "factory", "label": "Factory" }
-      ],
-      "permissionKey": "canCreateBranch"
-    },
-    "addressLine1": {
-      "type": "text",
-      "label": "Address Line 1",
-      "placeholder": "123 Main Street",
-      "required": true,
-      "validations": ["addressFormat"],
-      "constraints": {
-        "minLength": 5,
-        "maxLength": 200
-      },
-      "permissionKey": "canCreateBranch"
-    },
-    "addressLine2": {
-      "type": "text",
-      "label": "Address Line 2",
-      "placeholder": "Suite 100",
-      "required": false,
-      "validations": ["addressFormat"],
-      "constraints": {
-        "maxLength": 200
-      },
-      "permissionKey": "canCreateBranch"
-    },
-    "branchCity": {
-      "type": "text",
-      "label": "City",
-      "placeholder": "Mumbai",
-      "required": true,
-      "validations": ["alphaSpaces"],
-      "constraints": {
-        "minLength": 2,
-        "maxLength": 50
-      },
-      "permissionKey": "canCreateBranch"
-    },
-    "branchState": {
-      "type": "text",
-      "label": "State/Province",
-      "placeholder": "Maharashtra",
-      "required": true,
-      "validations": ["alphaSpaces"],
-      "constraints": {
-        "minLength": 2,
-        "maxLength": 50
-      },
-      "permissionKey": "canCreateBranch"
-    },
-    "branchCountry": {
-      "type": "text",
-      "label": "Country",
-      "placeholder": "India",
-      "required": true,
-      "validations": ["alphaSpaces"],
-      "constraints": {
-        "minLength": 2,
-        "maxLength": 50
-      },
-      "permissionKey": "canCreateBranch"
-    },
-    "continent": {
-      "type": "select",
-      "label": "Continent",
-      "placeholder": "Select continent",
-      "required": true,
-      "options": [
-        { "value": "", "label": "Select", "disabled": true },
-        { "value": "africa", "label": "Africa" },
-        { "value": "asia", "label": "Asia" },
-        { "value": "europe", "label": "Europe" },
-        { "value": "north_america", "label": "North America" },
-        { "value": "south_america", "label": "South America" },
-        { "value": "oceania", "label": "Oceania" },
-        { "value": "antarctica", "label": "Antarctica" }
-      ],
-      "permissionKey": "canCreateBranch"
-    },
-    "coordinates": {
-      "type": "text",
-      "label": "Coordinates",
-      "placeholder": "40.7128, -74.0060",
-      "required": false,
-      "validations": ["coordinatesFormat"],
-      "description": "Enter latitude and longitude (e.g., 40.7128, -74.0060)",
-      "constraints": {
-        "maxLength": 50
-      },
-      "permissionKey": "canCreateBranch"
-    },
-    "numEmployeesPerm": {
-      "type": "number",
-      "label": "Permanent Employees",
-      "placeholder": "0",
-      "required": true,
-      "validations": ["positiveNumber"],
-      "constraints": {
-        "min": 0,
-        "max": 100000
-      },
-      "permissionKey": "canCreateBranch"
-    },
-    "numEmployeesTemp": {
-      "type": "number",
-      "label": "Temporary Employees",
-      "placeholder": "0",
-      "required": true,
-      "validations": ["positiveNumber"],
-      "constraints": {
-        "min": 0,
-        "max": 100000
-      },
-      "permissionKey": "canCreateBranch"
-    },
-    "controlType": {
-      "type": "select",
-      "label": "Control Type",
-      "placeholder": "Select control type",
-      "required": true,
-      "options": [
-        { "value": "", "label": "Select", "disabled": true },
-        { "value": "full", "label": "Full Control" },
-        { "value": "operational", "label": "Operational Control" },
-        { "value": "financial", "label": "Financial Control" },
-        { "value": "none", "label": "No Control" }
-      ],
-      "permissionKey": "canCreateBranch"
-    },
-    "equityPercent": {
-      "type": "number",
-      "label": "Equity Percentage",
-      "placeholder": "100",
-      "required": true,
-      "validations": ["percentageRange"],
-      "description": "Enter value between 0 and 100",
-      "constraints": {
-        "min": 0,
-        "max": 100
-      },
-      "permissionKey": "canCreateBranch"
-    },
-    "operationalBoundary": {
-      "type": "textarea",
-      "label": "Operational Boundary",
-      "placeholder": "Define the operational boundaries for this branch",
-      "required": false,
-      "rows": 2,
-      "constraints": {
-        "maxLength": 500
-      },
-      "permissionKey": "canCreateBranch"
-    },
-    "scopeOfActivity": {
-      "type": "textarea",
-      "label": "Scope of Activity",
-      "placeholder": "Describe the scope of activities performed at this branch",
-      "required": false,
-      "rows": 2,
-      "constraints": {
-        "maxLength": 500
-      },
-      "permissionKey": "canCreateBranch"
-    },
-    "branchCreatedBy": {
-      "type": "text",
-      "label": "Created By",
-      "placeholder": "System",
-      "required": true,
-      "disabled": true,
-      "constraints": {
-        "maxLength": 100
-      }
-    },
-    "branchCreatedAt": {
-      "type": "date",
-      "label": "Created Date",
-      "placeholder": "Select date",
-      "required": true,
-      "disabled": true
-    },
-    "branchUpdatedBy": {
-      "type": "text",
-      "label": "Updated By",
-      "placeholder": "-",
-      "required": false,
-      "disabled": true,
-      "constraints": {
-        "maxLength": 100
-      }
-    },
-    "branchUpdatedAt": {
-      "type": "date",
-      "label": "Updated Date",
-      "placeholder": "-",
-      "required": false,
-      "disabled": true
+      "validations": ["numericOnly"]
     }
   }
 }
