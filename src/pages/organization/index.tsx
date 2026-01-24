@@ -1,23 +1,56 @@
-// src/pages/organization/index.tsx
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { OrganizationForm } from "../../components/organization/organization-form";
-import { ArrowLeft, Home } from "lucide-react";
+/**
+ * Organization Page
+ * 
+ * Uses the DynamicForm component with 'organization' form configuration.
+ */
+
+import { useEffect, useState, useRef } from 'react';
+import { useRouter } from 'next/router';
+import { toast } from 'react-toastify';
+import { ArrowLeft } from 'lucide-react';
+import { DynamicForm } from '../../components/dynamic-form';
+import { logger } from '../../utils/logger';
+import type { FormData } from '../../types/form.types';
 
 export default function OrganizationPage() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const trackingIdRef = useRef<string | null>(null);
 
   useEffect(() => {
-    const auth = localStorage.getItem("isAuthenticated");
-    if (auth !== "true") {
-      router.replace("/register");
+    trackingIdRef.current = logger.logPageEntry('/organization');
+    const auth = localStorage.getItem('isAuthenticated');
+
+    if (auth !== 'true') {
+      router.replace('/register');
     } else {
       setIsAuthenticated(true);
     }
+
     setIsLoading(false);
+
+    return () => {
+      if (trackingIdRef.current) {
+        logger.logPageExit(trackingIdRef.current);
+      }
+    };
   }, [router]);
+
+  const handleBackToDashboard = () => {
+    router.push('/user-form');
+  };
+
+  const handleSubmit = async (formData: FormData) => {
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      toast.success('Organization saved successfully!');
+    } catch (error) {
+      toast.error('Failed to save organization.');
+      throw error;
+    }
+  };
 
   if (isLoading) {
     return (
@@ -40,15 +73,13 @@ export default function OrganizationPage() {
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => router.push("/user-form")}
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                <ArrowLeft className="w-5 h-5" />
-                <span className="hidden sm:inline">Back to Dashboard</span>
-              </button>
-            </div>
+            <button
+              onClick={handleBackToDashboard}
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span className="hidden sm:inline">Back to Dashboard</span>
+            </button>
           </div>
         </div>
       </header>
@@ -59,10 +90,19 @@ export default function OrganizationPage() {
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900">Organization Master</h1>
             <p className="mt-2 text-sm text-gray-600">
-              Create and manage organizations and their branch locations
+              Create and manage organizations and their details
             </p>
           </div>
-          <OrganizationForm />
+
+          {/* Form Card */}
+          <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+            <DynamicForm
+              formId="organization"
+              onSubmit={handleSubmit}
+              onCancel={handleBackToDashboard}
+              cancelButtonText="Cancel"
+            />
+          </div>
         </div>
       </main>
     </div>

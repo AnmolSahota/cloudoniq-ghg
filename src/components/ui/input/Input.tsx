@@ -5,7 +5,6 @@ import React, {
   InputHTMLAttributes,
 } from "react";
 
-/* ---------------------------------- types --------------------------------- */
 
 interface InputProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
@@ -17,7 +16,6 @@ interface InputProps
   className?: string;
 }
 
-/* ---------------------------------- Input --------------------------------- */
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
   (
@@ -77,7 +75,6 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
 
         <div className="relative">
-          {/* Left Icon (decorative) */}
           {leftIcon && (
             <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
               {leftIcon}
@@ -101,7 +98,6 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             {...rest}
           />
 
-          {/* Right Icon (interactive) */}
           {rightIcon && (
             <span className="absolute inset-y-0 right-0 flex items-center pr-3">
               {rightIcon}
@@ -109,7 +105,6 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
 
-        {/* Helper / Error text */}
         {!showError && helperText && (
           <p id={hintId} className="mt-1 text-xs text-slate-500">
             {helperText}

@@ -40,6 +40,16 @@
       },
       "validations": ["strongPassword"]
     },
+    "loginPassword": {
+      "type": "password",
+      "label": "Password",
+      "placeholder": "Enter password",
+      "required": true,
+      "icon": "lock",
+      "showToggle": true,
+      "constraints": {},
+      "validations": []
+    },
     "organizationCode": {
       "type": "text",
       "label": "Organization Code",

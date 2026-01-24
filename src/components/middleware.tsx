@@ -1,6 +1,5 @@
-// components/ProtectedRoute.tsx
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router"; // ✅ Correct for Pages Router
+import { useRouter } from "next/router";
 import { Loader2 } from "lucide-react";
 
 interface ProtectedRouteProps {
@@ -13,10 +12,8 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // ✅ Only access localStorage in useEffect (client-side only)
     const checkAuth = () => {
       try {
-        // Check if we're in the browser
         if (typeof window !== "undefined") {
           const authStatus = localStorage.getItem("isAuthenticated");
           
@@ -36,7 +33,6 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     checkAuth();
   }, [router]);
 
-  // Show loading spinner while checking authentication
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -48,11 +44,9 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     );
   }
 
-  // Don't render anything if not authenticated (redirecting)
   if (!isAuthenticated) {
     return null;
   }
 
-  // Render children if authenticated
   return <>{children}</>;
 }

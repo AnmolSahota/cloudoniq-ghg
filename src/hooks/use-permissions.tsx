@@ -5,7 +5,6 @@ export interface UserPermissions {
   userName: string;
   role: "admin" | "org_manager" | "branch_manager" | "viewer";
   
-  // Organization permissions
   canViewOrganization: boolean;
   canEditOrganization: boolean;
   canCreateOrganization: boolean;

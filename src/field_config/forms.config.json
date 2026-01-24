@@ -1,0 +1,338 @@
+{
+  "login": {
+    "id": "login",
+    "title": "Welcome Back",
+    "subtitle": "Sign in to your account",
+    "submitText": "Sign In",
+    "loadingText": "Signing in...",
+    "icon": "LogIn",
+    "sections": [
+      {
+        "id": "credentials",
+        "columns": 1,
+        "fields": {
+          "login_id": {
+            "type": "text",
+            "label": "Username",
+            "placeholder": "Enter your username",
+            "required": true,
+            "icon": "User",
+            "constraints": {
+              "minLength": 3,
+              "maxLength": 20
+            },
+            "validations": []
+          },
+          "password": {
+            "type": "password",
+            "label": "Password",
+            "placeholder": "Enter your password",
+            "required": true,
+            "icon": "Lock",
+            "showToggle": true,
+            "constraints": {},
+            "validations": []
+          }
+        }
+      }
+    ]
+  },
+
+  "register": {
+    "id": "register",
+    "title": "Create Account",
+    "subtitle": "Sign up to get started",
+    "submitText": "Create Account",
+    "loadingText": "Creating Account...",
+    "icon": "UserPlus",
+    "sections": [
+      {
+        "id": "account",
+        "title": "Account Information",
+        "icon": "User",
+        "columns": 1,
+        "fields": {
+          "name": {
+            "type": "text",
+            "label": "Full Name",
+            "placeholder": "Enter your full name",
+            "required": true,
+            "icon": "User",
+            "constraints": {
+              "minLength": 2,
+              "maxLength": 50
+            },
+            "validations": ["alphaOnly"]
+          },
+          "userId": {
+            "type": "text",
+            "label": "User ID",
+            "placeholder": "Choose a unique user ID",
+            "required": true,
+            "icon": "AtSign",
+            "constraints": {
+              "minLength": 4,
+              "maxLength": 20
+            },
+            "validations": ["noSpaces"]
+          },
+          "email": {
+            "type": "email",
+            "label": "Email Address",
+            "placeholder": "Enter your email",
+            "required": true,
+            "icon": "Mail",
+            "validations": ["emailFormat"]
+          },
+          "password": {
+            "type": "password",
+            "label": "Password",
+            "placeholder": "Create a strong password",
+            "required": true,
+            "icon": "Lock",
+            "showToggle": true,
+            "constraints": {
+              "minLength": 8
+            },
+            "validations": ["strongPassword"],
+            "helperText": "Must contain uppercase, lowercase, number, and symbol"
+          }
+        }
+      }
+    ]
+  },
+
+  "organization": {
+    "id": "organization",
+    "title": "Organization Details",
+    "subtitle": "Enter organization information",
+    "submitText": "Save Organization",
+    "loadingText": "Saving...",
+    "icon": "Building2",
+    "sections": [
+      {
+        "id": "basic",
+        "title": "Basic Information",
+        "icon": "Building2",
+        "columns": 2,
+        "fields": {
+          "organizationCode": {
+            "type": "text",
+            "label": "Organization Code",
+            "placeholder": "e.g., ORG-001",
+            "required": true,
+            "icon": "Hash",
+            "constraints": {
+              "minLength": 4,
+              "maxLength": 10
+            },
+            "validations": ["noSpaces"]
+          },
+          "organizationName": {
+            "type": "text",
+            "label": "Organization Name",
+            "placeholder": "Enter organization name",
+            "required": true,
+            "icon": "Building2",
+            "constraints": {
+              "minLength": 2,
+              "maxLength": 100
+            },
+            "validations": []
+          }
+        }
+      },
+      {
+        "id": "address",
+        "title": "Address Details",
+        "icon": "MapPin",
+        "columns": 1,
+        "fields": {
+          "address": {
+            "type": "textarea",
+            "label": "Street Address",
+            "placeholder": "Enter complete street address",
+            "required": false,
+            "icon": "MapPin",
+            "rows": 2,
+            "constraints": {
+              "maxLength": 200
+            },
+            "validations": []
+          }
+        }
+      }
+    ]
+  },
+
+  "userForm": {
+    "id": "userForm",
+    "title": "Create New User",
+    "subtitle": "Fill in the details below to create a new user",
+    "submitText": "Create User",
+    "loadingText": "Creating...",
+    "icon": "UserPlus",
+    "sections": [
+      {
+        "id": "personal",
+        "title": "Personal Information",
+        "icon": "User",
+        "columns": 2,
+        "fields": {
+          "firstName": {
+            "type": "text",
+            "label": "First Name",
+            "placeholder": "Enter first name",
+            "required": true,
+            "icon": "User",
+            "constraints": {
+              "minLength": 2,
+              "maxLength": 50
+            },
+            "validations": ["alphaOnly"]
+          },
+          "lastName": {
+            "type": "text",
+            "label": "Last Name",
+            "placeholder": "Enter last name",
+            "required": true,
+            "icon": "User",
+            "constraints": {
+              "minLength": 2,
+              "maxLength": 50
+            },
+            "validations": ["alphaOnly"]
+          }
+        }
+      },
+      {
+        "id": "contact",
+        "title": "Contact Information",
+        "icon": "Mail",
+        "columns": 2,
+        "fields": {
+          "email": {
+            "type": "email",
+            "label": "Email Address",
+            "placeholder": "user@example.com",
+            "required": true,
+            "icon": "Mail",
+            "validations": ["emailFormat"]
+          },
+          "phone": {
+            "type": "tel",
+            "label": "Phone Number",
+            "placeholder": "+91 98765 43210",
+            "required": true,
+            "icon": "Phone",
+            "constraints": {
+              "minLength": 10,
+              "maxLength": 15
+            },
+            "validations": ["phoneFormat"]
+          }
+        }
+      },
+      {
+        "id": "organization",
+        "title": "Organization Details",
+        "icon": "Building2",
+        "columns": 3,
+        "fields": {
+          "department": {
+            "type": "select",
+            "label": "Department",
+            "placeholder": "Select department",
+            "required": true,
+            "icon": "Briefcase",
+            "options": [
+              { "value": "engineering", "label": "Engineering" },
+              { "value": "sales", "label": "Sales" },
+              { "value": "marketing", "label": "Marketing" },
+              { "value": "hr", "label": "Human Resources" },
+              { "value": "finance", "label": "Finance" }
+            ]
+          },
+          "designation": {
+            "type": "text",
+            "label": "Designation",
+            "placeholder": "e.g., Senior Developer",
+            "required": true,
+            "icon": "Award",
+            "constraints": {
+              "maxLength": 50
+            },
+            "validations": []
+          },
+          "branch": {
+            "type": "select",
+            "label": "Branch",
+            "placeholder": "Select branch",
+            "required": true,
+            "icon": "Building",
+            "options": [
+              { "value": "mumbai", "label": "Mumbai - Head Office" },
+              { "value": "delhi", "label": "Delhi - North Zone" },
+              { "value": "bangalore", "label": "Bangalore - South Zone" }
+            ]
+          }
+        }
+      },
+      {
+        "id": "address",
+        "title": "Address",
+        "icon": "MapPin",
+        "columns": 3,
+        "fields": {
+          "address": {
+            "type": "textarea",
+            "label": "Address",
+            "placeholder": "Enter your address",
+            "required": false,
+            "icon": "MapPin",
+            "rows": 2,
+            "colSpan": 3,
+            "constraints": {
+              "maxLength": 200
+            },
+            "validations": []
+          },
+          "city": {
+            "type": "text",
+            "label": "City",
+            "placeholder": "Enter city",
+            "required": false,
+            "icon": "Building2",
+            "constraints": {
+              "maxLength": 50
+            },
+            "validations": []
+          },
+          "state": {
+            "type": "text",
+            "label": "State",
+            "placeholder": "Enter state",
+            "required": false,
+            "icon": "Map",
+            "constraints": {
+              "maxLength": 50
+            },
+            "validations": []
+          },
+          "pincode": {
+            "type": "text",
+            "label": "Pincode",
+            "placeholder": "Enter pincode",
+            "required": false,
+            "icon": "Hash",
+            "constraints": {
+              "minLength": 6,
+              "maxLength": 6
+            },
+            "validations": ["numericOnly"]
+          }
+        }
+      }
+    ]
+  }
+}

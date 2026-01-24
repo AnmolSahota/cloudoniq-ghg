@@ -4,16 +4,16 @@
       "message": "Only alphabetic characters are allowed"
     },
     "emailFormat": {
-      "message": "Invalid email address"
+      "message": "Please enter a valid email address"
     },
     "strongPassword": {
-      "message": "Password must contain uppercase, lowercase, number, and symbol"
+      "message": "Password must contain uppercase, lowercase, number, and special character"
     },
     "noSpaces": {
       "message": "Spaces are not allowed"
     },
     "phoneFormat": {
-      "message": "Invalid phone number"
+      "message": "Please enter a valid phone number"
     },
     "numericOnly": {
       "message": "Only numbers are allowed"
