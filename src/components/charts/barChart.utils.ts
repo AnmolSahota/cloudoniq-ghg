@@ -18,8 +18,7 @@ export function getShadedColor(
 
   return `hsl(${hue}, 60%, ${lightness}%)`;
 }
-
-/* ---------- Rank computation ---------- */
+/* ---------- Rank computation (IMMUTABLE) ---------- */
 export function computeRanks(data: BarChartDatum[]) {
   const map: Record<string, BarChartDatum[]> = {};
 
@@ -31,21 +30,28 @@ export function computeRanks(data: BarChartDatum[]) {
     map[key].push(d);
   });
 
+  const rankedMap = new WeakMap<BarChartDatum, { rank: number; total: number }>();
+
   Object.values(map).forEach(items => {
     [...items]
       .sort((a, b) => a.value - b.value)
       .forEach((item, i) => {
-        item._rank = i + 1;
-        item._total = items.length;
+        rankedMap.set(item, {
+          rank: i + 1,
+          total: items.length,
+        });
       });
   });
+
+  return rankedMap;
 }
+
 
 /* ---------- Totals ---------- */
 export function computeTotals(data: BarChartDatum[]) {
   const totals: Record<string, number> = {};
 
-  data.forEach(d => {
+  data.forEach((d) => {
     totals[d.category] = (totals[d.category] || 0) + d.value;
   });
 

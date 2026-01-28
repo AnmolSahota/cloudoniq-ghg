@@ -11,4 +11,5 @@ export interface GenericBarChartProps {
   data: BarChartDatum[];
   title?: string;
   formFactor: "desktop" | "tablet" | "mobile";
+  onDrillDown?: (category: string, data: BarChartDatum[]) => void;
 }

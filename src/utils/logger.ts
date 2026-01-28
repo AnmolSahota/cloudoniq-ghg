@@ -1,4 +1,3 @@
-
 const STORAGE_KEY = 'analytics_logs';
 
 export interface AnalyticsLogEntry {
@@ -17,6 +16,39 @@ interface ActivePage {
 
 class AnalyticsLogger {
   private activePages: Map<string, ActivePage> = new Map();
+  private lastEntryTimestamp = 0;
+
+  /* ===================== SECURITY HELPERS ===================== */
+
+  private logSecurity(message: string, extra?: unknown): void {
+    console.warn(
+      `🔐 SECURITY ${message}`,
+      extra ?? ''
+    );
+  }
+
+  private checkSecurity(): void {
+    // Non-HTTPS access
+    if (location.protocol !== 'https:') {
+      this.logSecurity('Non-HTTPS page access detected', location.href);
+    }
+
+    // localStorage availability
+    try {
+      localStorage.setItem('__test__', '1');
+      localStorage.removeItem('__test__');
+    } catch {
+      this.logSecurity('localStorage is unavailable or blocked');
+    }
+  }
+
+  /* ===================== PERFORMANCE HELPERS ===================== */
+
+  private logPerformance(message: string, duration?: number): void {
+    console.info(
+      `⚡ PERFORMANCE ${message}${duration ? ` | ${duration.toFixed(2)}ms` : ''}`
+    );
+  }
 
   private getCurrentUserId(): string | undefined {
     try {
@@ -39,23 +71,37 @@ class AnalyticsLogger {
   }
 
   private getLogs(): AnalyticsLogEntry[] {
+    const start = performance.now();
     try {
       const data = localStorage.getItem(STORAGE_KEY);
       return data ? JSON.parse(data) : [];
     } catch {
       return [];
+    } finally {
+      this.logPerformance('Read analytics logs', performance.now() - start);
     }
   }
 
   private saveLogs(logs: AnalyticsLogEntry[]): void {
+    const start = performance.now();
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(logs.slice(-500)));
     } catch (error) {
       console.error('Failed to save analytics logs:', error);
+    } finally {
+      this.logPerformance('Write analytics logs', performance.now() - start);
     }
   }
 
   logPageEntry(url: string): string {
+    this.checkSecurity();
+
+    const nowPerf = performance.now();
+    if (nowPerf - this.lastEntryTimestamp < 300) {
+      this.logSecurity('Rapid page entry detected (possible abuse)', url);
+    }
+    this.lastEntryTimestamp = nowPerf;
+
     const id = `page_${Date.now()}`;
     const now = new Date();
     const entryTime = this.formatDateTime(now);
@@ -76,9 +122,8 @@ class AnalyticsLogger {
     this.saveLogs(logs);
 
     console.log(
-      ` ANALYTICS User entered: ${url} | Time: ${entryTime} | UserId: ${this.getCurrentUserId() || 'N/A'}`,
-      'color: #3B82F6; font-weight: bold; background: #DBEAFE; padding: 2px 6px; border-radius: 3px;',
-      'color: inherit;'
+      `📊 ANALYTICS User entered: ${url} | Time: ${entryTime} | UserId: ${this.getCurrentUserId() || 'N/A'}`,
+      'color: #3B82F6; font-weight: bold; background: #DBEAFE; padding: 2px 6px; border-radius: 3px;'
     );
 
     return id;
@@ -90,6 +135,11 @@ class AnalyticsLogger {
 
     const now = new Date();
     const exitTime = this.formatDateTime(now);
+    const duration = performance.now() - page.startPerf;
+
+    if (duration > 10_000) {
+      this.logPerformance('Slow page session detected', duration);
+    }
 
     this.activePages.delete(trackingId);
 
@@ -104,9 +154,8 @@ class AnalyticsLogger {
     }
 
     console.log(
-      `📊 ANALYTICS User exited: ${page.url} | Exit: ${exitTime} | UserId: ${this.getCurrentUserId() || 'N/A'}`,
-      'color: #3B82F6; font-weight: bold; background: #DBEAFE; padding: 2px 6px; border-radius: 3px;',
-      'color: inherit;'
+      `📊 ANALYTICS User exited: ${page.url} | Exit: ${exitTime} | Duration: ${duration.toFixed(2)}ms | UserId: ${this.getCurrentUserId() || 'N/A'}`,
+      'color: #3B82F6; font-weight: bold; background: #DBEAFE; padding: 2px 6px; border-radius: 3px;'
     );
   }
 
